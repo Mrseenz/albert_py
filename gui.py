@@ -220,7 +220,7 @@ def generate():
     device_info = {
         'UniqueDeviceID': activation_info['DeviceID']['UniqueDeviceID'],
         'IMEI': activation_info['BasebandRequestInfo']['InternationalMobileEquipmentIdentity'],
-        'MEID': activation_info['BasebandRequestInfo']['MobileEquipmentIdentifier'],
+        'MEID': activation_info['BasebandRequestInfo'].get('MobileEquipmentIdentifier', '00000000000000'),
         'SerialNumber': activation_info['DeviceID']['SerialNumber'],
         'ProductType': activation_info['DeviceInfo']['ProductType'],
         'ICCID': activation_info['BasebandRequestInfo']['IntegratedCircuitCardIdentity']
