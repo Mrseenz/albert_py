@@ -632,6 +632,32 @@ class AppleMimicActivator:
 
 def main():
     """Main function"""
+    import argparse
+    parser = argparse.ArgumentParser(description="Apple Activation Server Mimic")
+    parser.add_argument("--input", help="Path to a file containing the activation info")
+    args = parser.parse_args()
+
+    if args.input:
+        with open(args.input, 'r') as f:
+            activation_info = f.read()
+
+        activator = AppleMimicActivator()
+        # The script is designed to work with a connected device, so we need to
+        # create a dummy device info dictionary.
+        activator.device_info = {
+            'UniqueDeviceID': '0000000000000000000000000000000000000000',
+            'IMEI': '00000000000000',
+            'MEID': '00000000000000',
+            'SerialNumber': '000000000000',
+            'ProductType': 'iPhone9,3',
+            'ICCID': '00000000000000000000'
+        }
+        activation_record = activator.generate_activation_record()
+        with open('activation_record.plist', 'wb') as f:
+            plistlib.dump(activation_record, f)
+        print("✅ Activation record generated and saved to activation_record.plist")
+        return 0
+
     print("🚀 Apple Activation Server Mimic")
     print("=" * 60)
     print("This tool will:")

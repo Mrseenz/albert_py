@@ -63,11 +63,9 @@ $collection_blob = $matches[1];
 if (strlen($collection_blob) > 10000) {
     // First handshake
     $response = get_response_template_1();
-    $content_type = 'application/json';
 } else {
     // Second handshake
     $response = get_response_template_2();
-    $content_type = 'application/xml';
 }
 
 // Replace the serverKP in the response template with the new value
@@ -76,7 +74,7 @@ $response = str_replace('__SERVER_KP_PLACEHOLDER__', base64_encode($handshake_re
 // Send the response
 header('Server: Apple');
 header('Date: ' . gmdate('D, d M Y H:i:s T'));
-header('Content-Type: ' . $content_type);
+header('Content-Type: application/xml');
 header('Transfer-Encoding: chunked');
 header('Connection: close');
 header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
@@ -89,13 +87,4 @@ header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
 header('X-XSS-Protection: 1; mode=block');
 
-if ($content_type === 'application/json') {
-    // Convert the XML response to a byte array in a JSON object
-    $response_bytes = [];
-    for ($i = 0; $i < strlen($response); $i++) {
-        $response_bytes[] = ord($response[$i]);
-    }
-    echo json_encode($response_bytes);
-} else {
-    echo $response;
-}
+echo $response;
