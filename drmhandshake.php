@@ -72,5 +72,19 @@ if (strlen($collection_blob) > 10000) {
 $response = str_replace('__SERVER_KP_PLACEHOLDER__', base64_encode($handshake_request_message), $response);
 
 // Send the response
+header('Server: Apple');
+header('Date: ' . gmdate('D, d M Y H:i:s T'));
 header('Content-Type: application/xml');
+header('Transfer-Encoding: chunked');
+header('Connection: close');
+header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+header('Strict-Transport-Security: max-age=31536000; includeSubdomains');
+header('Referrer-Policy: no-referrer');
+header('X-B3-TraceId: 32be1f0761158a18');
+header('X-Frame-Options: SAMEORIGIN');
+header('X-Content-Type-Options: nosniff');
+header('X-XSS-Protection: 1; mode=block');
+
 echo $response;
