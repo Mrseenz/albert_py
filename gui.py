@@ -199,7 +199,10 @@ def select_file():
 
 def generate():
     input_path = input_entry.get()
-    output_path = "activation_record.plist"
+
+    # Get the directory of the script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_path = os.path.join(script_dir, "activation_record.plist")
 
     with open(input_path, 'r') as f:
         activation_info_raw = f.read()
