@@ -201,20 +201,27 @@ def main():
 
     # The activation info is a multipart form data, so we need to extract the plist
     import re
-    match = re.search(r'<dict>.*</dict>', activation_info_raw, re.DOTALL)
+    match = re.search(r'(<dict>[\s\S]*<\/dict>)', activation_info_raw)
     if not match:
         raise ValueError("Could not find plist in activation info")
-    activation_info_plist = match.group(0)
+    activation_info_plist = match.group(1)
 
     activation_info = plistlib.loads(activation_info_plist.encode('utf-8'))
 
+    # The device info is nested inside the 'ActivationInfoXML' key
+    activation_info_xml = activation_info.get("ActivationInfoXML")
+    if not activation_info_xml:
+        raise ValueError("Could not find ActivationInfoXML in activation info")
+
+    decoded_activation_info = plistlib.loads(activation_info_xml)
+
     device_info = {
-        'UniqueDeviceID': activation_info['UniqueDeviceID'],
-        'IMEI': activation_info['InternationalMobileEquipmentIdentity'],
-        'MEID': activation_info['MobileEquipmentIdentifier'],
-        'SerialNumber': activation_info['SerialNumber'],
-        'ProductType': activation_info['ProductType'],
-        'ICCID': activation_info['IntegratedCircuitCardIdentity']
+        'UniqueDeviceID': decoded_activation_info.get('UniqueDeviceID', '0000000000000000000000000000000000000000'),
+        'IMEI': decoded_activation_info.get('InternationalMobileEquipmentIdentity', '00000000000000'),
+        'MEID': decoded_activation_info.get('MobileEquipmentIdentifier', '00000000000000'),
+        'SerialNumber': decoded_activation_info.get('SerialNumber', '000000000000'),
+        'ProductType': decoded_activation_info.get('ProductType', 'iPhone9,3'),
+        'ICCID': decoded_activation_info.get('IntegratedCircuitCardIdentity', '00000000000000000000')
     }
 
     activation_record = generate_activation_record(device_info)
