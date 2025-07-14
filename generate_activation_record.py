@@ -201,12 +201,14 @@ def main():
 
     # The activation info is a multipart form data, so we need to extract the plist
     import re
-    match = re.search(r'(<dict>[\s\S]*<\/dict>)', activation_info_raw)
+    match = re.search(r'<data>([\s\S]*?)<\/data>', activation_info_raw)
     if not match:
         raise ValueError("Could not find plist in activation info")
-    activation_info_plist = match.group(1)
 
-    activation_info = plistlib.loads(activation_info_plist.encode('utf-8'))
+    # The data is base64 encoded
+    activation_info_plist = base64.b64decode(match.group(1))
+
+    activation_info = plistlib.loads(activation_info_plist)
 
     # The device info is nested inside the 'ActivationInfoXML' key
     activation_info_xml = activation_info.get("ActivationInfoXML")
