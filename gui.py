@@ -204,18 +204,8 @@ def generate():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_path = os.path.join(script_dir, "activation_record.plist")
 
-    with open(input_path, 'r') as f:
-        activation_info_raw = f.read()
-
-    import re
-    match = re.search(r'<data>([\s\S]*?)<\/data>', activation_info_raw)
-    if not match:
-        raise ValueError("Could not find plist in activation info")
-
-    # The data is base64 encoded
-    activation_info_plist = base64.b64decode(match.group(1))
-
-    activation_info = plistlib.loads(activation_info_plist)
+    with open(input_path, 'rb') as f:
+        activation_info = plistlib.load(f)
 
     device_info = {
         'UniqueDeviceID': activation_info['DeviceID']['UniqueDeviceID'],
